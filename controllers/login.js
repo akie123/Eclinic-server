@@ -21,7 +21,7 @@ const invalidLoginCred = (res) => {
 
 const LoginController = async (req, res) => {
     let user = await Doctor.findOne(
-        { number: req.body.number,verified: false },
+        { number: req.body.number,verified: true },
         { password: 1 }
     ); // Checking for Doctor
     if (user !== null) {

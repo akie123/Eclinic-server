@@ -39,14 +39,14 @@ const checkPast = (obj) => {
 
 const getDoctors = (req,res) => {
     Doctor.find(
-        {},
+        {verified:true},
         {
             name: 1,
             spec: 1,
             fees: 1,
             qualification: 1,
             appointment: 1,
-            profilePic : 1
+            profilePic : 1,
         }
     ).then((resp) => {
         res.send(resp);
