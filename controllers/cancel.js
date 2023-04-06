@@ -10,7 +10,7 @@ const CancelController = async (req, res) => {
     {
         if(doctor.appointment[i].time==req.body.time && doctor.appointment[i].patientId!="")
         {
-            doctor.appointment[i].avb=false
+            doctor.appointment[i].avb=true
             doctor.appointment[i].patientId=""
             Doc.findByIdAndUpdate(doctorId,doctor).then(()=>{
 

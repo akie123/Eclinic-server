@@ -59,6 +59,7 @@ const getUpcoming = async (req, res) => {
     if (name)
         name = name.name;
     Appointment.find({ idP: id }).then((resp) => {
+        console.log(resp)
         let arr = [],arr1 = [];
         resp.forEach((appointment) => {
             if (!checkPast(appointment))

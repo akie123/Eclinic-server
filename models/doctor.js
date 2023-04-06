@@ -42,7 +42,7 @@ const doctorSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  year: {
+  exp: {
     type: String,
     required: true,
   },
