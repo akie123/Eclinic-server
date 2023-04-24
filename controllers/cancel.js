@@ -1,11 +1,12 @@
 const Apt = require("../models/appointment")
 const Doc = require("../models/doctor")
+const redisClient = require("../utils/redis")
 
 const CancelController = async (req, res) => {
 
     const doctorId=req.body.idD
     const doctor = await Doc.findById(doctorId);
-
+    redisClient.del(doctor.spec)
     for(let i=0;i<doctor.appointment.length;i++)
     {
         if(doctor.appointment[i].time==req.body.time && doctor.appointment[i].patientId!="")

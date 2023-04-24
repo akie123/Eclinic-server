@@ -1,6 +1,7 @@
 const Doctor = require("../models/doctor")
 const Patient =require("../models/patient")
 const Appointment = require("../models/appointment")
+const redisClient = require("../utils/redis");
 
 const helperfun = (str) => {
     let currentTime = new Date();
@@ -13,41 +14,36 @@ const helperfun = (str) => {
         currentTime.getTime() + (ISTOffset + currentOffset) * 60000
     );
 
-
+    // ISTTime now represents the time in IST coordinates
 
     let hoursIST = ISTTime.getHours();
     let minutesIST = ISTTime.getMinutes();
     let hours = str.substr(0, 2);
     let minutes = str.substr(3, 2);
-    if (hours > hoursIST)
-        return true;
-    else if(hours == hoursIST)
-        return minutes > minutesIST;
-    else
-        return false;
+    if (hours > hoursIST) return true;
+    else if (hours == hoursIST) return minutes > minutesIST;
+    else return false;
 };
+
 const checkPast = (obj) => {
-    const todaydate = new Date()
-    const date = new Date(obj.date)
-    if(todaydate.getFullYear() > date.getFullYear())
-        return true;
+    const todaydate = new Date();
+    const date = new Date(obj.date);
+    if (todaydate.getFullYear() > date.getFullYear()) return true;
     else {
-        if(todaydate.getMonth() > date.getMonth())
-            return true;
-        else{
-            if(todaydate.getDate() > date.getDate())
-                return true;
-            else
-                return !helperfun(obj.time)
+        if (todaydate.getMonth() > date.getMonth()) return true;
+        else {
+            if (todaydate.getDate() > date.getDate()) return true;
+            else if (todaydate.getDate() < date.getDate()) return false;
+            else return !helperfun(obj.time);
         }
     }
-}
+};
 const getSchedule = (req,res) => {
     const {id} = req.params
     Doctor.findById(id, { appointment : 1})
-    .then(resp => {
-        res.json({array : resp})
-    })
+        .then(resp => {
+            res.json({array : resp})
+        })
 }
 const getUpcoming = async (req, res) => {
     const { id } = req.params;
@@ -60,21 +56,26 @@ const getUpcoming = async (req, res) => {
         resp.forEach((appointment) => {
             if (!checkPast(appointment)) arr.push(appointment);
         });
+        console.log(arr)
         if (arr.length > 0) {
             arr.forEach((appointment, indx) => {
-                Patient.findById(appointment.idP, { name: 1, spec: 1 }).then((pat) => {
+                Patient.findById(appointment.idP, { name: 1, spec: 1,profilePic: 1,gender: 1 }).then((pat) => {
                     arr1.push({
                         id: appointment._id,
-                        idP : appointment.idP,
-                        idD : id,
+                        idP: appointment.idP,
+                        idD: id,
                         time: appointment.time,
-                        name: pat.name
+                        name: pat.name,
+                        profilePic: pat.profilePic,
+                        gender: pat.gender
                     });
-                    if (indx === arr.length - 1)
+                    if (arr.length === arr1.length){
                         res.send({
                             upcoming: arr1,
                             name: name,
                         });
+                        console.log(arr1)
+                    }
                 });
             });
         } else {
@@ -105,7 +106,7 @@ const getPast = async (req,res) => {
                             time: appointment.time,
                             name: pat.name,
                         });
-                        if (indx === arr.length - 1)
+                        if (arr1.length === arr.length)
                             res.send({
                                 past: arr1
                             });
@@ -122,13 +123,14 @@ const getPast = async (req,res) => {
 const updateSchedule = async(req,res) => {
     const {id} = req.params
     let tt= await Doctor.findById(id)
+    redisClient.del(tt.spec)
     console.log(req.body)
     tt.appointment=req.body
 
     Doctor.findByIdAndUpdate(id,tt)
-    .then(resp => {
-        res.sendStatus(200)
-    })
+        .then(resp => {
+            res.sendStatus(200)
+        })
 }
 
 module.exports = {getSchedule,updateSchedule,getUpcoming,getPast}

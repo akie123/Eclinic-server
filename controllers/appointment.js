@@ -1,5 +1,6 @@
 const Apt = require("../models/appointment")
 const Doc = require("../models/doctor")
+const redisClient = require("../utils/redis");
 
 const ApController = async (req, res) => {
 
@@ -8,6 +9,7 @@ const ApController = async (req, res) => {
     new_user.save()
         .then(async() => {
             let doc= await Doc.findById(req.body.idD);
+            redisClient.del(doc.spec)
             for(let i=0;i<doc.appointment.length;i++)
             {
                 if(doc.appointment[i].time==req.body.time)

@@ -47,6 +47,10 @@ const patientSchema = mongoose.Schema({
     default:
       "https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg",
   },
+  socketId:{
+    type:String,
+    required: false
+  }
 });
 
 module.exports = mongoose.model('patient',patientSchema)

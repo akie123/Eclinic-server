@@ -7,6 +7,19 @@ const Query = require('../models/query');
 const Doctor = require('../models/doctor');
 router.use(checkValidToken); // Jwt Middleware
 
+router.get('/queries/:id', async (req, res) => {
+    console.log('Fetching queries...');
+    const {id} = req.params
+    try {
+        const query = await Query.findById(id);
+        console.log(`Found one queries`);
+        console.log(query)
+        res.send(query);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error');
+    }
+})
 
 /**
  * @swagger

@@ -16,7 +16,7 @@ const RegisterRouter = require("./routes/register")
 const ContactusRouter = require("./routes/contactus")
 const CancelRouter = require("./routes/cancel")
 const VerifyRouter =require("./routes/verify")
-
+const PrescriptionRouter = require("./routes/prescription")
 // constanst
 const { MONGO_URI,PORT } = require('./constants')
 
@@ -97,23 +97,41 @@ const options = {
 };
 
 const specs = swaggerJsDoc(options);
+const Patient = require("./models/patient")
+const Doctors = require("./models/doctor")
+app.post("/addIdP",(req,res)=>{
+    console.log(req.body)
+    Patient.findByIdAndUpdate(req.body.id, { socketId: req.body.sid })
+        .then(() => {
+            res.json({ status: 'success' });
+        })
+        .catch((err) => {
+            res.json({ status: 'failed' });
+        });
+})
+app.post("/addIdD",(req,res)=>{
+    console.log(req.body)
+    Doctor.findByIdAndUpdate(req.body.id, { socketId: req.body.sid })
+        .then(() => {
+            res.json({ status: 'success' });
+        })
+        .catch((err) => {
+            res.json({ status: 'failed' });
+        });
+})
 
-// const accountSid = "ACe3a758fd297164b3e3131ec6d89e354e";
-// const authToken = process.env.TWILIO_AUTH_TOKEN;
-// const verifySid = "VAb22e3cff8d2974f20a8e884b7dc6fad0";
-// const client = require("twilio")(accountSid, authToken);
-//
-// app.post("/verify",(req,res)=>{
-//     client.verify.v2
-//         .services(verifySid)
-//         .verifications.create({ to: `+91${req.body.number}`, channel: "sms" })
-//         .then((data)=>{
-//             res.status(200).send(data);
-//         })
-//         .catch((err)=>{
-//             res.status(404).send(err)
-//         })
-// })
+app.get('/pat/:idP',async(req,res)=>{
+    Patient.findById(req.params.idP).then(pat => {
+        if(pat)
+        res.status(201).json({ socket:pat.socketId })
+        else
+            res.status(201).json({ socket:"" })
+    }).catch(err => {
+        res.status(201).json({ socket:"" });
+    });
+
+})
+
 
 // Routes
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
@@ -126,6 +144,7 @@ app.use("/contact-us",ContactusRouter)  // Contact us Router
 app.use("/patient",PatientRouter)       // Patient Router
 app.use("/doctor",DoctorRouter)         // Doctor Router
 app.use("/admin",AdminRouter)           // Admin Router
+app.use("/prescription",PrescriptionRouter) // Prescription Router
 app.use("*",(req,res) => {
   res.sendStatus(404)                   // No path found
 })
