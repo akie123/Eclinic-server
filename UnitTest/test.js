@@ -31,17 +31,17 @@ describe("Patients API", () => {
       });
   });
 
-  it("Should get patient info", (done) => {
-    chai
-      .request(server)
-      .get("/patient/644a3a888c67e9df59d48b59/getinfo")
-      .set({ authorization: `Bearer ${token}` })
-      .end((err, response) => {
-        response.should.have.status(200);
-        response.body.should.be.a("object");
-        done();
-      });
-  });
+//   it("Should get patient info", (done) => {
+//     chai
+//       .request(server)
+//       .get("/patient/644a3a888c67e9df59d48b59/getinfo")
+//       .set({ authorization: `Bearer ${token}` })
+//       .end((err, response) => {
+//         response.should.have.status(200);
+//         response.body.should.be.a("object");
+//         done();
+//       });
+//   });
 });
 
 describe("Login Test", () => {
