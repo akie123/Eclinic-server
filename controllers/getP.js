@@ -29,10 +29,19 @@ const helperfun = (str) => {
 };
 
 const checkPast = (obj) => {
-  const todaydate = new Date();
+    let currentTime = new Date();
+
+    let currentOffset = currentTime.getTimezoneOffset();
+
+    let ISTOffset = 330; // IST offset UTC +5:30
+
+    let ISTTime = new Date(
+      currentTime.getTime() + (ISTOffset + currentOffset) * 60000
+    );
+  let todaydate = ISTTime
   const date = new Date(obj.date);
-  console.log(todaydate)
-  console.log(date)
+    console.log(todaydate.getDate());
+    console.log(date.getDate());
   if (todaydate.getFullYear() > date.getFullYear()) return true;
   else {
     if (todaydate.getMonth() > date.getMonth()) return true;

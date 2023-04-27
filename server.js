@@ -21,7 +21,7 @@ const PrescriptionRouter = require("./routes/prescription");
 const { MONGO_URI, PORT } = require("./constants");
 
 // Middlewares
-app.use(cors({ origin: true })); // cors middleware
+app.use(cors()); // cors middleware
 app.use(morgan("tiny", { stream: accessLogStream }));
 app.use(express.json({ limit: "2mb" }), (err, req, res, next) => {
   // bodyparse middle ware checks for valid body format
