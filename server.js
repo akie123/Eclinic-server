@@ -148,3 +148,5 @@ app.use("/prescription",PrescriptionRouter) // Prescription Router
 app.use("*",(req,res) => {
   res.sendStatus(404)                   // No path found
 })
+
+module.exports = app

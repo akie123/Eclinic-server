@@ -33,9 +33,19 @@ jobs:
         tags: eclinic.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_17e945a57dc647d6b6e6881ddad0a080 }}/eclinicbackend:${{ github.sha }}
         file: ./Dockerfile
 
-  deploy:
+  test:
     runs-on: ubuntu-latest
     needs: build
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run Tests
+        run: |
+          npm install 
+          npm test
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: ['build','test']
     environment:
       name: 'production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
