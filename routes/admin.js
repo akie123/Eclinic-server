@@ -21,6 +21,20 @@ router.get('/queries/:id', async (req, res) => {
     }
 })
 
+router.delete("/queries/:id", async (req, res) => {
+  console.log("Fetching queries...");
+  const { id } = req.params;
+  try {
+    const query = await Query.findByIdAndDelete(id);
+    console.log(`Found one queries`);
+    console.log(query);
+    res.send(query);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
 /**
  * @swagger
  * components:

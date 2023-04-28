@@ -21,8 +21,6 @@ const helperfun = (str) => {
   let minutesIST = ISTTime.getMinutes();
   let hours = str.substr(0, 2);
   let minutes = str.substr(3, 2);
-  console.log(hoursIST,"  ",minutesIST)
-  console.log(hours,"  ",minutes)
   if (hours > hoursIST) return true;
   else if (hours == hoursIST) return minutes > minutesIST;
   else return false;
@@ -40,8 +38,6 @@ const checkPast = (obj) => {
     );
   let todaydate = ISTTime
   const date = new Date(obj.date);
-    console.log(todaydate.getDate());
-    console.log(date.getDate());
   if (todaydate.getFullYear() > date.getFullYear()) return true;
   else {
     if (todaydate.getMonth() > date.getMonth()) return true;

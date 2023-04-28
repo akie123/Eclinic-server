@@ -59,7 +59,6 @@ const doctorSchema = mongoose.Schema({
   fees: {
     type: Number,
     required: true,
-
   },
   verified: {
     type: Boolean,

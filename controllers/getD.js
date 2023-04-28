@@ -2,6 +2,7 @@ const Doctor = require("../models/doctor");
 const Patient = require("../models/patient");
 const Appointment = require("../models/appointment");
 const redisClient = require("../utils/redis");
+const Prescription = require("../models/prescription");
 
 const helperfun = (str) => {
   let currentTime = new Date();
@@ -37,8 +38,6 @@ const checkPast = (obj) => {
   );
   let todaydate = ISTTime;
   const date = new Date(obj.date);
-  console.log(todaydate.getDate())
-  console.log(date.getDate())
   if (todaydate.getFullYear() > date.getFullYear()) return true;
   else {
     if (todaydate.getMonth() > date.getMonth()) return true;
@@ -66,7 +65,6 @@ const getUpcoming = async (req, res) => {
     resp.forEach((appointment) => {
       if (!checkPast(appointment)) arr.push(appointment);
     });
-    console.log(arr);
     if (arr.length > 0) {
       arr.forEach((appointment, indx) => {
         Patient.findById(appointment.idP, {
@@ -107,7 +105,9 @@ const getPast = async (req, res) => {
     let arr = [],
       arr1 = [];
     resp.forEach((appointment) => {
-      if (checkPast(appointment)) arr.push(appointment);
+      if (checkPast(appointment)) {
+        arr.push(appointment);
+      }
     });
     if (arr.length > 0) {
       arr.forEach((appointment, indx) => {
@@ -120,10 +120,18 @@ const getPast = async (req, res) => {
             time: appointment.time,
             name: pat.name,
           });
-          if (arr1.length === arr.length)
-            res.send({
-              past: arr1,
-            });
+          if (arr1.length === arr.length) {
+            for (let i = 0; i < arr1.length; i++) {
+              Prescription.findOne({ app_id: arr1[i].id }).then((resp) => {
+                arr1[i].prescription = resp;
+                if (i == arr1.length - 1) {
+                  res.send({
+                    past: arr1,
+                  });
+                }
+              });
+            }
+          }
         });
       });
     } else {
