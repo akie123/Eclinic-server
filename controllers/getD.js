@@ -149,6 +149,7 @@ const updateSchedule = async (req, res) => {
   tt.appointment = req.body;
 
   Doctor.findByIdAndUpdate(id, tt).then((resp) => {
+    redisClient.del(resp.spec)
     res.sendStatus(200);
   });
 };
