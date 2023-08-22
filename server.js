@@ -46,26 +46,6 @@ mongoose
 const cron = require("node-cron");
 const Doctor = require("./models/doctor");
 
-cron.schedule("0 0 * * *", async () => {
-  let docs = await Doctor.find({});
-
-  for (let i = 0; i < docs.length; i++) {
-    for (let j = 0; j < docs[i].appointment.length; j++) {
-      const appointmentDate = docs[i].appointment[j].date;
-      const currentDate = new Date().toDateString();
-
-      if (
-        docs[i].appointment[j].patientId != "" &&
-        appointmentDate != currentDate
-      ) {
-        docs[i].appointment[j].avb = true;
-        docs[i].appointment[j].patientId = "";
-      }
-    }
-
-    await docs[i].save();
-  }
-});
 const options = {
   definition: {
     openapi: "3.0.0",
@@ -96,41 +76,10 @@ const options = {
   },
   apis: ["./routes/*.js"],
 };
-
 const specs = swaggerJsDoc(options);
 const Patient = require("./models/patient");
 const Doctors = require("./models/doctor");
-app.post("/addIdP", (req, res) => {
-  console.log(req.body);
-  Patient.findByIdAndUpdate(req.body.id, { socketId: req.body.sid })
-    .then(() => {
-      res.json({ status: "success" });
-    })
-    .catch((err) => {
-      res.json({ status: "failed" });
-    });
-});
-app.post("/addIdD", (req, res) => {
-  console.log(req.body);
-  Doctor.findByIdAndUpdate(req.body.id, { socketId: req.body.sid })
-    .then(() => {
-      res.json({ status: "success" });
-    })
-    .catch((err) => {
-      res.json({ status: "failed" });
-    });
-});
 
-app.get("/pat/:idP", async (req, res) => {
-  Patient.findById(req.params.idP)
-    .then((pat) => {
-      if (pat) res.status(201).json({ socket: pat.socketId });
-      else res.status(201).json({ socket: "" });
-    })
-    .catch((err) => {
-      res.status(201).json({ socket: "" });
-    });
-});
 
 // Routes
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
@@ -144,6 +93,39 @@ app.use("/patient", PatientRouter); // Patient Router
 app.use("/doctor", DoctorRouter); // Doctor Router
 app.use("/admin", AdminRouter); // Admin Router
 app.use("/prescription", PrescriptionRouter); // Prescription Router
+
+app.post("/addIdP", (req, res) => {
+
+  Patient.findByIdAndUpdate(req.body.id, { socketId: req.body.sid })
+      .then(() => {
+        res.json({ status: "success" });
+      })
+      .catch((err) => {
+        res.json({ status: "failed" });
+      });
+});
+app.post("/addIdD", (req, res) => {
+  console.log(req.body);
+  Doctor.findByIdAndUpdate(req.body.id, { socketId: req.body.sid })
+      .then(() => {
+        res.json({ status: "success" });
+      })
+      .catch((err) => {
+        res.json({ status: "failed" });
+      });
+});
+
+app.get("/pat/:idP", async (req, res) => {
+  Patient.findById(req.params.idP)
+      .then((pat) => {
+        if (pat) res.status(201).json({ socket: pat.socketId });
+        else res.status(201).json({ socket: "" });
+      })
+      .catch((err) => {
+        res.status(201).json({ socket: "" });
+      });
+});
+
 app.use("*", (req, res) => {
   res.sendStatus(404); // No path found
 });

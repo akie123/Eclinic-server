@@ -6,6 +6,7 @@ const ApController = async (req, res) => {
 
     req.body.date= new Date()
     const new_user = new Apt(req.body)
+
     new_user.save()
         .then(async() => {
             let doc= await Doc.findById(req.body.idD);
