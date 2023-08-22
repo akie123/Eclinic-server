@@ -109,6 +109,16 @@ const getDoctors = async (req, res) => {
           ) {
             resp[i].appointment[j].avb = false;
           }
+          else if(resp[i].appointment[j].avb === false)
+          {
+            const givenDateString = resp[i].appointment[j].time;
+            const givenDate = new Date(givenDateString);
+            const currentDate = new Date();
+            if (givenDate <= currentDate) {
+              resp[i].appointment[j].patientId = "";
+              resp[i].appointment[j].avb = true;
+            }
+          }
         }
       }
       redisClient.set(department, JSON.stringify(resp));

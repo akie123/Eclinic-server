@@ -110,7 +110,7 @@ const getPast = async (req, res) => {
       }
     });
     if (arr.length > 0) {
-      arr.forEach((appointment, indx) => {
+      arr.forEach((appointment) => {
         Patient.findById(appointment.idP, { name: 1, spec: 1 }).then((pat) => {
           arr1.push({
             id: appointment._id,

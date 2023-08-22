@@ -105,7 +105,6 @@ app.post("/addIdP", (req, res) => {
       });
 });
 app.post("/addIdD", (req, res) => {
-  console.log(req.body);
   Doctor.findByIdAndUpdate(req.body.id, { socketId: req.body.sid })
       .then(() => {
         res.json({ status: "success" });
