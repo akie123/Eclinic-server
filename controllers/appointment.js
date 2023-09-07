@@ -16,6 +16,7 @@ const ApController = async (req, res) => {
                 if(doc.appointment[i].time==req.body.time)
                 {
                     doc.appointment[i].avb=false;
+                    doc.appointment[i].date=new Date().toDateString();
                     doc.appointment[i].patientId=req.body.idP;
                     break
                 }

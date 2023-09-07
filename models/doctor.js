@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { councils, state, specialization } = require("./constants")
+
 
 const doctorSchema = mongoose.Schema({
   name: {

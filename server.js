@@ -20,6 +20,7 @@ const PrescriptionRouter = require("./routes/prescription");
 // constanst
 const { MONGO_URI, PORT } = require("./constants");
 
+
 // Middlewares
 app.use(cors()); // cors middleware
 app.use(morgan("tiny", { stream: accessLogStream }));
@@ -43,7 +44,7 @@ mongoose
     });
   });
 
-const cron = require("node-cron");
+
 const Doctor = require("./models/doctor");
 
 const options = {
@@ -78,7 +79,6 @@ const options = {
 };
 const specs = swaggerJsDoc(options);
 const Patient = require("./models/patient");
-const Doctors = require("./models/doctor");
 
 
 // Routes
